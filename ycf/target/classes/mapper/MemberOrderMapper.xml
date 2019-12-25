@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="spring.mapper.cvs.MemberOrderMapper">
+
+  <select id="selectYouFei" resultType="spring.dto.result.GetMemberResult">
+SELECT
+	*
+FROM
+(
+SELECT
+	member_id memberId,
+	'回收订单' name,
+	you_price price,
+	create_time createTime
+FROM
+	m_recovery_goods
+WHERE
+	order_state = 4
+	AND member_id = #{memberId}
+	UNION ALL
+SELECT
+	member_id memberId,
+	'七日年化收益' name,
+	you_price price,
+	create_time createTime
+FROM
+	m_member_interest
+WHERE
+	member_id = #{memberId}
+	) as  a ORDER BY a.createTime desc
+  </select>
+  <select id="selectPrice" resultType="spring.dto.result.GetMemberResult">
+  SELECT
+  '回收订单' name,
+   price,
+  create_time createTime
+  FROM
+      m_recovery_goods
+  WHERE
+      order_state = 4
+      AND member_id = #{memberId}
+  </select>
+
+  <select id="selectMemberWallet" resultType="spring.dto.result.GetMemberResult">
+SELECT
+	*
+FROM
+(
+SELECT
+	member_id memberId,
+	'回收订单鱿费收入' name,
+	you_price price,
+	create_time createTime
+FROM
+	m_recovery_goods
+WHERE
+	order_state = 4
+	AND member_id = #{memberId}
+	UNION ALL
+SELECT
+	member_id memberId,
+	'七日年化收益' name,
+	you_price price,
+	create_time createTime
+FROM
+	m_member_interest
+WHERE
+	member_id = #{memberId}
+UNION ALL
+	SELECT
+	member_id memberId,
+	'回收订单现金收入' name,
+	price price,
+	create_time createTime
+FROM
+	m_recovery_goods
+WHERE
+	order_state = 4
+	AND member_id = #{memberId}
+	) as  a ORDER BY a.createTime desc
+  </select>
+
+
+</mapper>

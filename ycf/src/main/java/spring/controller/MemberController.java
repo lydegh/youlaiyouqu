@@ -2,6 +2,8 @@ package spring.controller;
 
 import io.swagger.annotations.ApiParam;
 import org.springframework.validation.annotation.Validated;
+import spring.annotation.CurrentUser;
+import spring.annotation.LoginRequired;
 import spring.dto.BaseCommonResult;
 import spring.dto.request.*;
 import spring.dto.result.*;
@@ -43,7 +45,8 @@ public class MemberController {
 
     @ApiOperation(value = "会员收货地址添加", notes = "会员收货地址添加")
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public BaseCommonResult add(@Validated @RequestBody UMemberReceiveAddress request){
+    @LoginRequired
+    public BaseCommonResult add(@CurrentUser UUserMember user,@Validated @RequestBody UMemberReceiveAddress request){
         return userService.add(request);
     }
 

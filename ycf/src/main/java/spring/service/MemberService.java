@@ -1,5 +1,7 @@
 package spring.service;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang3.StringUtils;
@@ -20,12 +22,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import spring.utils.UserInfoRedisUtil;
 import spring.wechat.service.WechatService;
 
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -73,6 +78,37 @@ public class MemberService {
         return ResultBuilder.success(map);
     }
 
+    public String getToken(UserLoginResponse result, UserLoginDto loginDto, MUserManual member,UUserMember userMember) {
+        String loginId = member.getWfcode();
+        String channelId = loginDto.getChannelId();
+        String userType = loginDto.getUserType();
+        String token = "";
+        try {
+            token = JWT.create()
+                    .withAudience(String.valueOf(userMember.getId()))          // 将 Id 保存到 token 里面
+                    .sign(Algorithm.HMAC256(userMember.getPassWord()));   // 以 密码 作为 token 的密钥
+            result.setToken(token);
+            result.setOldToken(token);
+        } catch (UnsupportedEncodingException ignore) {
+            ignore.printStackTrace();
+            log.info("token生成错误！" );
+        }
+        return token;
+    }
+
+    public UUserMember getAppUserMsg(String useId) {
+        UUserMember uUserMember = new UUserMember();
+        try {
+            uUserMember = userMemberMapper.selectByPrimaryKey(Long.valueOf(useId));
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.info("token生成错误！" );
+        }
+        return uUserMember;
+    }
+
+
+
     public BaseCommonResult<MemberLoginResponse> login(MemberRequest record) {
         String operatorid = null;
         try {
@@ -101,7 +137,7 @@ public class MemberService {
             loginDto.setUserType(Constants.USER_TYPE_MEMBER);
             MUserManual member = new MUserManual();
             member.setWfcode(userMember.getAppId());
-            TonKenUtile.setResultToken(result, loginDto, member);
+            getToken(result, loginDto, member,userMember);
             result.setLoginAccount(userMember.getAppId());
             result.setLoginId(String.valueOf(userMember.getId()));
             result.setUserName(userMember.getUserName());
@@ -116,7 +152,7 @@ public class MemberService {
     }
 
     public BaseCommonResult loginOut(String code) {
-        TonKenUtile.loginOut(code,Constants.USER_TYPE_MEMBER,Constants.CHANNELID_XCX);
+//        TonKenUtile.loginOut(code,Constants.USER_TYPE_MEMBER,Constants.CHANNELID_XCX);
         return ResultBuilder.success();
     }
     //获取会员信息

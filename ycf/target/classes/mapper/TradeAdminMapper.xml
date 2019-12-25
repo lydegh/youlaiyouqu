@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="spring.mapper.cvs.TradeAdminMapper">
+    <resultMap id="BaseResultMap" type="spring.model.MRecoveryGoods">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="order_no" jdbcType="VARCHAR" property="orderNo" />
+        <result column="member_id" jdbcType="BIGINT" property="memberId" />
+        <result column="member_name" jdbcType="VARCHAR" property="memberName" />
+        <result column="order_state" jdbcType="INTEGER" property="orderState" />
+        <result column="z_pic" jdbcType="VARCHAR" property="zPic" />
+        <result column="x_pic" jdbcType="VARCHAR" property="xPic" />
+        <result column="p_pic" jdbcType="VARCHAR" property="pPic" />
+        <result column="goods_brand" jdbcType="VARCHAR" property="goodsBrand" />
+        <result column="goods_condition" jdbcType="INTEGER" property="goodsCondition" />
+        <result column="fresh_used" jdbcType="INTEGER" property="freshUsed" />
+        <result column="goods_price" jdbcType="DECIMAL" property="goodsPrice" />
+        <result column="you_price" jdbcType="DECIMAL" property="youPrice" />
+        <result column="price" jdbcType="DECIMAL" property="price" />
+        <result column="remarks" jdbcType="VARCHAR" property="remarks" />
+        <result column="de_remarks" jdbcType="VARCHAR" property="deRemarks" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    id, order_no, member_id, member_name, order_state, z_pic, x_pic, p_pic, goods_brand,
+    goods_condition, fresh_used, goods_price, you_price, price, remarks, de_remarks,
+     create_time
+  </sql>
+
+
+  <select id="selectOrderList" parameterType="spring.trade.dto.request.AdminOrderReq" resultType="spring.trade.dto.result.AdminTradeResult">
+    SELECT
+    p.id id,
+    p.order_no orderNo,
+    po.goods_picture goodsPicture,
+    p.create_time createTime,
+    p.total_price totalPrice,
+    p.goods_num goodsNum,
+    u.user_name memberName,
+    p.order_price orderPrice,
+    p.order_state orderState
+    FROM
+    p_orders p
+    left JOIN p_orders_details po on p.id = po.order_no
+    left join u_user_member u on p.user_id = u.id
+    where 1=1
+    <if test="orderNo != null">
+      AND p.order_no LIKE concat("%",#{orderNo},"%")
+    </if>
+    <if test="userName != null">
+      AND u.user_name LIKE concat("%",#{userName},"%")
+    </if>
+    <if test="orderState != null">
+      and p.order_state = #{orderState}
+    </if>
+    <if test="startTime != null and endTime!= null">
+      and  unix_timestamp(p.create_time) BETWEEN #{startTime,jdbcType=BIGINT} and #{endTime,jdbcType=BIGINT}
+    </if>
+    ORDER BY p.create_time DESC
+  </select>
+
+  <select id="selectAdminOrderDetails" resultType="spring.trade.dto.result.AdminTradeDetailsResult">
+   SELECT
+          p.order_no orderNo,
+          p.order_type orderType,
+          u.user_name memberName,
+          p.received_name receivedName,
+          p.phone phone,
+          p.detailed_address address,
+          p.address_no addressNo,
+          p.remarks remarks,
+          p.create_time createTime,
+          p.order_state orderState
+      FROM
+      p_orders p
+      left JOIN p_orders_details po on p.id = po.order_no
+      left join u_user_member u on p.user_id = u.id
+      where p.id = #{orderId}
+  </select>
+  <select id="selectOrderGoodsListResult" resultType="spring.trade.dto.result.OrderGoodsListResult">
+   SELECT
+      po.goods_price,
+          g.goods_name,
+          po.goods_condition,
+          po.goods_price,
+          po.you_pricce,
+          po.discount_price,
+          po.order_price
+      FROM
+      p_orders_details po
+          JOIN p_goods g on po.goods_id = g.id
+      where po.order_no = #{orderId}
+
+  </select>
+
+    <select id="selectAdminRecoveryOrderList" resultMap="BaseResultMap" parameterType="spring.trade.dto.request.AdminRecoveryRequest">
+    select
+    <include refid="Base_Column_List" />
+     from
+      m_recovery_goods
+      where
+      1=1
+      <if test="orderState != null and orderState != ''">
+        and order_state = #{orderState}
+      </if>
+      <if test="orderNo != null and orderNo != ''">
+        and order_no LIKE concat("%",#{orderNo},"%")
+      </if>
+      <if test="goodsCondition != null and goodsCondition != ''">
+          and goods_condition = #{goodsCondition}
+      </if>
+       <if test="memberName != null and memberName != ''">
+          and member_name = #{memberName}
+      </if>
+      <if test="startTime != null and endTime != null">
+          and  unix_timestamp(create_time) BETWEEN #{startTime,jdbcType=BIGINT} and #{endTime,jdbcType=BIGINT}
+      </if>
+      order by create_time desc
+    </select>
+
+    <select id="selectMemberOrderList"  resultType="spring.trade.dto.result.POrdersResult">
+        SELECT
+        g.goods_name goodsName,
+        pd.goods_price goodsPrice,
+        pd.discount_price discountPrice,
+        pd.goods_picture goodsPicture,
+        pd.goods_num goodsNum,
+        pd.goods_picture goodsPicture
+        FROM
+        p_orders p
+        left join p_orders_details pd on p.id =  pd.order_no
+        left join p_goods g on g.id = pd.goods_id
+        WHERE
+        p.id = #{id}
+    </select>
+
+    <select id="selectMemberTradeList" resultType="spring.trade.dto.result.POrdersListResult" parameterType="spring.trade.dto.request.MemberOrderReq">
+        select
+        p.id id,
+        p.order_no orderNo,
+        p.order_state orderState,
+        p.create_time createTime,
+        p.order_price orderPrice,
+        p.goods_num goodsNum,
+        p.update_time updateTime,
+        p.send_time sendTime,
+        p.received_name receivedName,
+        p.phone phone,
+        p.province province,
+        p.city city,
+        p.area area,
+        p.address address,
+        p.detailed_address detailedAddress
+        FROM
+        p_orders p
+        where 1=1
+        <if test="userId != null and userId != ''">
+          and  p.user_id = #{userId}
+        </if>
+        <if test="orderNo != null and orderNo != ''">
+            and p.id = #{orderNo}
+        </if>
+        <if test="orderState != null and orderState != ''">
+            and p.order_state = #{orderState}
+        </if>
+        <if test="ids != null and ids != ''">
+         and p.order_state in (
+         <foreach collection="ids.split(',')" item="item" index="index" separator=",">
+             #{item}
+         </foreach>
+            )
+        </if>
+        order by p.create_time desc
+    </select>
+    <resultMap id="Recovery_BaseResultMap" type="spring.model.MRecoveryGoods">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="order_no" jdbcType="VARCHAR" property="orderNo" />
+        <result column="member_id" jdbcType="BIGINT" property="memberId" />
+        <result column="member_name" jdbcType="VARCHAR" property="memberName" />
+        <result column="title" jdbcType="VARCHAR" property="title" />
+        <result column="order_state" jdbcType="INTEGER" property="orderState" />
+        <result column="z_pic" jdbcType="VARCHAR" property="zPic" />
+        <result column="x_pic" jdbcType="VARCHAR" property="xPic" />
+        <result column="p_pic" jdbcType="VARCHAR" property="pPic" />
+        <result column="goods_brand" jdbcType="VARCHAR" property="goodsBrand" />
+        <result column="goods_condition" jdbcType="INTEGER" property="goodsCondition" />
+        <result column="fresh_used" jdbcType="INTEGER" property="freshUsed" />
+        <result column="goods_price" jdbcType="DECIMAL" property="goodsPrice" />
+        <result column="you_price" jdbcType="DECIMAL" property="youPrice" />
+        <result column="price" jdbcType="DECIMAL" property="price" />
+        <result column="t_fresh_used" jdbcType="INTEGER" property="tFreshUsed" />
+        <result column="t_you_price" jdbcType="DECIMAL" property="tYouPrice" />
+        <result column="t_price" jdbcType="DECIMAL" property="tPrice" />
+        <result column="remarks" jdbcType="VARCHAR" property="remarks" />
+        <result column="de_remarks" jdbcType="VARCHAR" property="deRemarks" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    </resultMap>
+    <sql id="Recovery_Base_Column_List">
+    id, order_no, member_id, member_name, title, order_state, z_pic, x_pic, p_pic, goods_brand,
+    goods_condition, fresh_used, goods_price, you_price, price, t_fresh_used, t_you_price,
+    t_price, remarks, de_remarks, create_time
+  </sql>
+    <select id="selectRecoveryOrderList" parameterType="spring.trade.dto.request.RecoveryRequest" resultMap="Recovery_BaseResultMap">
+        select
+        <include refid="Recovery_Base_Column_List" />
+        from m_recovery_goods
+        where
+        1=1
+        <if test="memberId != null and memberId != ''">
+            and member_id = #{memberId}
+        </if>
+        <if test="orderState != null and orderState != ''">
+            and order_state = #{orderState}
+        </if>
+        <if test="ids != null and ids != ''">
+            and order_state in (
+            <foreach collection="ids.split(',')" item="item" index="index" separator=",">
+                #{item}
+            </foreach>
+            )
+        </if>
+    </select>
+
+    <select id="selectSumPrice" resultType="spring.dto.result.MemberSumPrice">
+     SELECT
+	IFNULL(sum( price ),0) price
+    FROM
+        m_recovery_goods
+    WHERE
+    member_id = #{memberId} and DATE_FORMAT(create_time,'%Y-%d-%m') = DATE_FORMAT(NOW(),'%Y-%d-%m')
+    AND order_state = 4
+    </select>
+
+    <update id="updateMemberCount">
+        UPDATE u_user_member SET l_type=0
+    </update>
+</mapper>

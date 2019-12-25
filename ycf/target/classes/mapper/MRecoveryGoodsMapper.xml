@@ -1,0 +1,464 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="spring.mapper.MRecoveryGoodsMapper">
+  <resultMap id="BaseResultMap" type="spring.model.MRecoveryGoods">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="order_no" jdbcType="VARCHAR" property="orderNo" />
+    <result column="member_id" jdbcType="BIGINT" property="memberId" />
+    <result column="member_name" jdbcType="VARCHAR" property="memberName" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="order_state" jdbcType="INTEGER" property="orderState" />
+    <result column="z_pic" jdbcType="VARCHAR" property="zPic" />
+    <result column="x_pic" jdbcType="VARCHAR" property="xPic" />
+    <result column="p_pic" jdbcType="VARCHAR" property="pPic" />
+    <result column="goods_brand" jdbcType="VARCHAR" property="goodsBrand" />
+    <result column="goods_condition" jdbcType="INTEGER" property="goodsCondition" />
+    <result column="fresh_used" jdbcType="INTEGER" property="freshUsed" />
+    <result column="goods_price" jdbcType="DECIMAL" property="goodsPrice" />
+    <result column="you_price" jdbcType="DECIMAL" property="youPrice" />
+    <result column="price" jdbcType="DECIMAL" property="price" />
+    <result column="t_fresh_used" jdbcType="INTEGER" property="tFreshUsed" />
+    <result column="t_you_price" jdbcType="DECIMAL" property="tYouPrice" />
+    <result column="t_price" jdbcType="DECIMAL" property="tPrice" />
+    <result column="remarks" jdbcType="VARCHAR" property="remarks" />
+    <result column="de_remarks" jdbcType="VARCHAR" property="deRemarks" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, order_no, member_id, member_name, title, order_state, z_pic, x_pic, p_pic, goods_brand, 
+    goods_condition, fresh_used, goods_price, you_price, price, t_fresh_used, t_you_price, 
+    t_price, remarks, de_remarks, create_time
+  </sql>
+  <select id="selectByExample" parameterType="spring.model.MRecoveryGoodsExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from m_recovery_goods
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from m_recovery_goods
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from m_recovery_goods
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="spring.model.MRecoveryGoodsExample">
+    delete from m_recovery_goods
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="spring.model.MRecoveryGoods">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into m_recovery_goods (order_no, member_id, member_name, 
+      title, order_state, z_pic, 
+      x_pic, p_pic, goods_brand, 
+      goods_condition, fresh_used, goods_price, 
+      you_price, price, t_fresh_used, 
+      t_you_price, t_price, remarks, 
+      de_remarks, create_time)
+    values (#{orderNo,jdbcType=VARCHAR}, #{memberId,jdbcType=BIGINT}, #{memberName,jdbcType=VARCHAR}, 
+      #{title,jdbcType=VARCHAR}, #{orderState,jdbcType=INTEGER}, #{zPic,jdbcType=VARCHAR}, 
+      #{xPic,jdbcType=VARCHAR}, #{pPic,jdbcType=VARCHAR}, #{goodsBrand,jdbcType=VARCHAR}, 
+      #{goodsCondition,jdbcType=INTEGER}, #{freshUsed,jdbcType=INTEGER}, #{goodsPrice,jdbcType=DECIMAL}, 
+      #{youPrice,jdbcType=DECIMAL}, #{price,jdbcType=DECIMAL}, #{tFreshUsed,jdbcType=INTEGER}, 
+      #{tYouPrice,jdbcType=DECIMAL}, #{tPrice,jdbcType=DECIMAL}, #{remarks,jdbcType=VARCHAR}, 
+      #{deRemarks,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="spring.model.MRecoveryGoods">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into m_recovery_goods
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="orderNo != null">
+        order_no,
+      </if>
+      <if test="memberId != null">
+        member_id,
+      </if>
+      <if test="memberName != null">
+        member_name,
+      </if>
+      <if test="title != null">
+        title,
+      </if>
+      <if test="orderState != null">
+        order_state,
+      </if>
+      <if test="zPic != null">
+        z_pic,
+      </if>
+      <if test="xPic != null">
+        x_pic,
+      </if>
+      <if test="pPic != null">
+        p_pic,
+      </if>
+      <if test="goodsBrand != null">
+        goods_brand,
+      </if>
+      <if test="goodsCondition != null">
+        goods_condition,
+      </if>
+      <if test="freshUsed != null">
+        fresh_used,
+      </if>
+      <if test="goodsPrice != null">
+        goods_price,
+      </if>
+      <if test="youPrice != null">
+        you_price,
+      </if>
+      <if test="price != null">
+        price,
+      </if>
+      <if test="tFreshUsed != null">
+        t_fresh_used,
+      </if>
+      <if test="tYouPrice != null">
+        t_you_price,
+      </if>
+      <if test="tPrice != null">
+        t_price,
+      </if>
+      <if test="remarks != null">
+        remarks,
+      </if>
+      <if test="deRemarks != null">
+        de_remarks,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="orderNo != null">
+        #{orderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="memberId != null">
+        #{memberId,jdbcType=BIGINT},
+      </if>
+      <if test="memberName != null">
+        #{memberName,jdbcType=VARCHAR},
+      </if>
+      <if test="title != null">
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="orderState != null">
+        #{orderState,jdbcType=INTEGER},
+      </if>
+      <if test="zPic != null">
+        #{zPic,jdbcType=VARCHAR},
+      </if>
+      <if test="xPic != null">
+        #{xPic,jdbcType=VARCHAR},
+      </if>
+      <if test="pPic != null">
+        #{pPic,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsBrand != null">
+        #{goodsBrand,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsCondition != null">
+        #{goodsCondition,jdbcType=INTEGER},
+      </if>
+      <if test="freshUsed != null">
+        #{freshUsed,jdbcType=INTEGER},
+      </if>
+      <if test="goodsPrice != null">
+        #{goodsPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="youPrice != null">
+        #{youPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="price != null">
+        #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="tFreshUsed != null">
+        #{tFreshUsed,jdbcType=INTEGER},
+      </if>
+      <if test="tYouPrice != null">
+        #{tYouPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="tPrice != null">
+        #{tPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="remarks != null">
+        #{remarks,jdbcType=VARCHAR},
+      </if>
+      <if test="deRemarks != null">
+        #{deRemarks,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="spring.model.MRecoveryGoodsExample" resultType="java.lang.Long">
+    select count(*) from m_recovery_goods
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update m_recovery_goods
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.orderNo != null">
+        order_no = #{record.orderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.memberId != null">
+        member_id = #{record.memberId,jdbcType=BIGINT},
+      </if>
+      <if test="record.memberName != null">
+        member_name = #{record.memberName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.title != null">
+        title = #{record.title,jdbcType=VARCHAR},
+      </if>
+      <if test="record.orderState != null">
+        order_state = #{record.orderState,jdbcType=INTEGER},
+      </if>
+      <if test="record.zPic != null">
+        z_pic = #{record.zPic,jdbcType=VARCHAR},
+      </if>
+      <if test="record.xPic != null">
+        x_pic = #{record.xPic,jdbcType=VARCHAR},
+      </if>
+      <if test="record.pPic != null">
+        p_pic = #{record.pPic,jdbcType=VARCHAR},
+      </if>
+      <if test="record.goodsBrand != null">
+        goods_brand = #{record.goodsBrand,jdbcType=VARCHAR},
+      </if>
+      <if test="record.goodsCondition != null">
+        goods_condition = #{record.goodsCondition,jdbcType=INTEGER},
+      </if>
+      <if test="record.freshUsed != null">
+        fresh_used = #{record.freshUsed,jdbcType=INTEGER},
+      </if>
+      <if test="record.goodsPrice != null">
+        goods_price = #{record.goodsPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="record.youPrice != null">
+        you_price = #{record.youPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="record.price != null">
+        price = #{record.price,jdbcType=DECIMAL},
+      </if>
+      <if test="record.tFreshUsed != null">
+        t_fresh_used = #{record.tFreshUsed,jdbcType=INTEGER},
+      </if>
+      <if test="record.tYouPrice != null">
+        t_you_price = #{record.tYouPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="record.tPrice != null">
+        t_price = #{record.tPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="record.remarks != null">
+        remarks = #{record.remarks,jdbcType=VARCHAR},
+      </if>
+      <if test="record.deRemarks != null">
+        de_remarks = #{record.deRemarks,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createTime != null">
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update m_recovery_goods
+    set id = #{record.id,jdbcType=BIGINT},
+      order_no = #{record.orderNo,jdbcType=VARCHAR},
+      member_id = #{record.memberId,jdbcType=BIGINT},
+      member_name = #{record.memberName,jdbcType=VARCHAR},
+      title = #{record.title,jdbcType=VARCHAR},
+      order_state = #{record.orderState,jdbcType=INTEGER},
+      z_pic = #{record.zPic,jdbcType=VARCHAR},
+      x_pic = #{record.xPic,jdbcType=VARCHAR},
+      p_pic = #{record.pPic,jdbcType=VARCHAR},
+      goods_brand = #{record.goodsBrand,jdbcType=VARCHAR},
+      goods_condition = #{record.goodsCondition,jdbcType=INTEGER},
+      fresh_used = #{record.freshUsed,jdbcType=INTEGER},
+      goods_price = #{record.goodsPrice,jdbcType=DECIMAL},
+      you_price = #{record.youPrice,jdbcType=DECIMAL},
+      price = #{record.price,jdbcType=DECIMAL},
+      t_fresh_used = #{record.tFreshUsed,jdbcType=INTEGER},
+      t_you_price = #{record.tYouPrice,jdbcType=DECIMAL},
+      t_price = #{record.tPrice,jdbcType=DECIMAL},
+      remarks = #{record.remarks,jdbcType=VARCHAR},
+      de_remarks = #{record.deRemarks,jdbcType=VARCHAR},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="spring.model.MRecoveryGoods">
+    update m_recovery_goods
+    <set>
+      <if test="orderNo != null">
+        order_no = #{orderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="memberId != null">
+        member_id = #{memberId,jdbcType=BIGINT},
+      </if>
+      <if test="memberName != null">
+        member_name = #{memberName,jdbcType=VARCHAR},
+      </if>
+      <if test="title != null">
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="orderState != null">
+        order_state = #{orderState,jdbcType=INTEGER},
+      </if>
+      <if test="zPic != null">
+        z_pic = #{zPic,jdbcType=VARCHAR},
+      </if>
+      <if test="xPic != null">
+        x_pic = #{xPic,jdbcType=VARCHAR},
+      </if>
+      <if test="pPic != null">
+        p_pic = #{pPic,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsBrand != null">
+        goods_brand = #{goodsBrand,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsCondition != null">
+        goods_condition = #{goodsCondition,jdbcType=INTEGER},
+      </if>
+      <if test="freshUsed != null">
+        fresh_used = #{freshUsed,jdbcType=INTEGER},
+      </if>
+      <if test="goodsPrice != null">
+        goods_price = #{goodsPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="youPrice != null">
+        you_price = #{youPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="price != null">
+        price = #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="tFreshUsed != null">
+        t_fresh_used = #{tFreshUsed,jdbcType=INTEGER},
+      </if>
+      <if test="tYouPrice != null">
+        t_you_price = #{tYouPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="tPrice != null">
+        t_price = #{tPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="remarks != null">
+        remarks = #{remarks,jdbcType=VARCHAR},
+      </if>
+      <if test="deRemarks != null">
+        de_remarks = #{deRemarks,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="spring.model.MRecoveryGoods">
+    update m_recovery_goods
+    set order_no = #{orderNo,jdbcType=VARCHAR},
+      member_id = #{memberId,jdbcType=BIGINT},
+      member_name = #{memberName,jdbcType=VARCHAR},
+      title = #{title,jdbcType=VARCHAR},
+      order_state = #{orderState,jdbcType=INTEGER},
+      z_pic = #{zPic,jdbcType=VARCHAR},
+      x_pic = #{xPic,jdbcType=VARCHAR},
+      p_pic = #{pPic,jdbcType=VARCHAR},
+      goods_brand = #{goodsBrand,jdbcType=VARCHAR},
+      goods_condition = #{goodsCondition,jdbcType=INTEGER},
+      fresh_used = #{freshUsed,jdbcType=INTEGER},
+      goods_price = #{goodsPrice,jdbcType=DECIMAL},
+      you_price = #{youPrice,jdbcType=DECIMAL},
+      price = #{price,jdbcType=DECIMAL},
+      t_fresh_used = #{tFreshUsed,jdbcType=INTEGER},
+      t_you_price = #{tYouPrice,jdbcType=DECIMAL},
+      t_price = #{tPrice,jdbcType=DECIMAL},
+      remarks = #{remarks,jdbcType=VARCHAR},
+      de_remarks = #{deRemarks,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

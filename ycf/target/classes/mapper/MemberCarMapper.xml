@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="spring.mapper.cvs.MemberCarMapper">
+
+  <select id="selectMemberCarList" resultType="spring.dto.result.MemberCarResult" parameterType="java.lang.String">
+        SELECT
+        g.id goodsId,
+        g.goods_name goodsName,
+        g.discount_price discountPrice,
+        mm.id memberCarDetailId,
+        g.goods_num_type goodsNumType,
+		g.master_graph pic
+        FROM
+        m_member_car m
+        left join m_member_car_detail mm on m.id = mm.member_car_id
+        join p_goods g on mm.goods_id = g.id
+        WHERE
+        m.member_id =  #{memberId}
+    order by m.create_time desc
+  </select>
+
+</mapper>
